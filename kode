@@ -1,1 +1,90 @@
+import time
+import random
+import string
+import matplotlib.pyplot as plt
+from prettytable import PrettyTable
 
+# ===============================
+# Rekursif
+# ===============================
+def count_uppercase_recursive(text, index=0):
+    if index == len(text):
+        return 0
+    if 'A' <= text[index] <= 'Z':
+        return 1 + count_uppercase_recursive(text, index + 1)
+    return count_uppercase_recursive(text, index + 1)
+
+# ===============================
+# Iteratif
+# ===============================
+def count_uppercase_iterative(text):
+    count = 0
+    for char in text:
+        if 'A' <= char <= 'Z':
+            count += 1
+    return count
+
+# ===============================
+# Generate teks acak
+# ===============================
+def generate_random_text(length):
+    chars = string.ascii_letters
+    return ''.join(random.choice(chars) for _ in range(length))
+
+# ===============================
+# Data uji
+# ===============================
+input_sizes = [10, 50, 100, 200, 500, 1000]
+recursive_times = []
+iterative_times = []
+
+MAX_RECURSIVE_SIZE = 500  # batas aman rekursif
+
+for size in input_sizes:
+    text = generate_random_text(size)
+
+    # Rekursif (dibatasi)
+    if size <= MAX_RECURSIVE_SIZE:
+        start = time.time()
+        count_uppercase_recursive(text)
+        recursive_times.append(time.time() - start)
+    else:
+        recursive_times.append(None)
+
+    # Iteratif (selalu aman)
+    start = time.time()
+    count_uppercase_iterative(text)
+    iterative_times.append(time.time() - start)
+
+# ===============================
+# Tabel
+# ===============================
+table = PrettyTable()
+table.field_names = ["Panjang Kalimat", "Recursive Time (s)", "Iterative Time (s)"]
+
+for i in range(len(input_sizes)):
+    table.add_row([
+        input_sizes[i],
+        "-" if recursive_times[i] is None else f"{recursive_times[i]:.6f}",
+        f"{iterative_times[i]:.6f}"
+    ])
+
+print(table)
+
+# ===============================
+# Grafik (abaikan None)
+# ===============================
+plt.figure(figsize=(8, 6))
+
+x_rec = [input_sizes[i] for i in range(len(input_sizes)) if recursive_times[i] is not None]
+y_rec = [t for t in recursive_times if t is not None]
+
+plt.plot(x_rec, y_rec, marker='o', label='Recursive')
+plt.plot(input_sizes, iterative_times, marker='o', label='Iterative')
+
+plt.xlabel("Panjang Kalimat (jumlah karakter)")
+plt.ylabel("Waktu Eksekusi (detik)")
+plt.title("Perbandingan Waktu Eksekusi Algoritma")
+plt.legend()
+plt.grid(True)
+plt.show()
