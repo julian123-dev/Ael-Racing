@@ -1,6 +1,4 @@
 import time
-import random
-import string
 import matplotlib.pyplot as plt
 from prettytable import PrettyTable
 
@@ -20,57 +18,57 @@ def count_uppercase_iterative(text):
             count += 1
     return count
 
-
-# Generate teks acak
-def generate_random_text(length):
-    chars = string.ascii_letters
-    return ''.join(random.choice(chars) for _ in range(length))
-
-
 # Data uji
-input_sizes = [10, 50, 100, 200, 500, 1000]
+input_sizes = [5, 10, 15, 20, 25]
 recursive_times = []
 iterative_times = []
+uppercase_counts = []
 
-MAX_RECURSIVE_SIZE = 500
+print("Masukkan teks SESUAI panjang yang diminta.\n")
 
 for size in input_sizes:
-    text = generate_random_text(size)
+    while True:
+        text = input(f"Masukkan teks dengan panjang {size} karakter: ")
+        if len(text) == size:
+            break
+        print(f"Panjang teks harus {size} karakter")
 
-    # Rekursif (500)
-    if size <= MAX_RECURSIVE_SIZE:
-        start = time.time()
-        count_uppercase_recursive(text)
-        recursive_times.append(time.time() - start)
-    else:
-        recursive_times.append(None)
-
-    # Iteratif (1000)
+    # Rekursif
     start = time.time()
-    count_uppercase_iterative(text)
+    rec_count = count_uppercase_recursive(text)
+    recursive_times.append(time.time() - start)
+
+    # Iteratif
+    start = time.time()
+    iter_count = count_uppercase_iterative(text)
     iterative_times.append(time.time() - start)
 
-# Tabel
+    # Simpan jumlah huruf kapital
+    uppercase_counts.append(iter_count)
+
+# Tabel hasil
 table = PrettyTable()
-table.field_names = ["Panjang Kalimat", "Recursive Time (s)", "Iterative Time (s)"]
+table.field_names = [
+    "Panjang Kalimat",
+    "Jumlah Huruf Kapital",
+    "Recursive Time (s)",
+    "Iterative Time (s)"
+]
 
 for i in range(len(input_sizes)):
     table.add_row([
         input_sizes[i],
-        "-" if recursive_times[i] is None else f"{recursive_times[i]:.6f}",
+        uppercase_counts[i],
+        f"{recursive_times[i]:.6f}",
         f"{iterative_times[i]:.6f}"
     ])
 
+print("\nHasil Pengujian:")
 print(table)
 
-
-# Grafik (abaikan None)
+# Grafik
 plt.figure(figsize=(8, 6))
-
-x_rec = [input_sizes[i] for i in range(len(input_sizes)) if recursive_times[i] is not None]
-y_rec = [t for t in recursive_times if t is not None]
-
-plt.plot(x_rec, y_rec, marker='o', label='Recursive')
+plt.plot(input_sizes, recursive_times, marker='o', label='Recursive')
 plt.plot(input_sizes, iterative_times, marker='o', label='Iterative')
 
 plt.xlabel("Panjang Kalimat (jumlah karakter)")
