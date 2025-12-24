@@ -4,9 +4,7 @@ import string
 import matplotlib.pyplot as plt
 from prettytable import PrettyTable
 
-# ===============================
 # Rekursif
-# ===============================
 def count_uppercase_recursive(text, index=0):
     if index == len(text):
         return 0
@@ -14,9 +12,7 @@ def count_uppercase_recursive(text, index=0):
         return 1 + count_uppercase_recursive(text, index + 1)
     return count_uppercase_recursive(text, index + 1)
 
-# ===============================
 # Iteratif
-# ===============================
 def count_uppercase_iterative(text):
     count = 0
     for char in text:
@@ -24,26 +20,24 @@ def count_uppercase_iterative(text):
             count += 1
     return count
 
-# ===============================
+
 # Generate teks acak
-# ===============================
 def generate_random_text(length):
     chars = string.ascii_letters
     return ''.join(random.choice(chars) for _ in range(length))
 
-# ===============================
+
 # Data uji
-# ===============================
 input_sizes = [10, 50, 100, 200, 500, 1000]
 recursive_times = []
 iterative_times = []
 
-MAX_RECURSIVE_SIZE = 500  # batas aman rekursif
+MAX_RECURSIVE_SIZE = 500
 
 for size in input_sizes:
     text = generate_random_text(size)
 
-    # Rekursif (dibatasi)
+    # Rekursif (500)
     if size <= MAX_RECURSIVE_SIZE:
         start = time.time()
         count_uppercase_recursive(text)
@@ -51,14 +45,12 @@ for size in input_sizes:
     else:
         recursive_times.append(None)
 
-    # Iteratif (selalu aman)
+    # Iteratif (1000)
     start = time.time()
     count_uppercase_iterative(text)
     iterative_times.append(time.time() - start)
 
-# ===============================
 # Tabel
-# ===============================
 table = PrettyTable()
 table.field_names = ["Panjang Kalimat", "Recursive Time (s)", "Iterative Time (s)"]
 
@@ -71,9 +63,8 @@ for i in range(len(input_sizes)):
 
 print(table)
 
-# ===============================
+
 # Grafik (abaikan None)
-# ===============================
 plt.figure(figsize=(8, 6))
 
 x_rec = [input_sizes[i] for i in range(len(input_sizes)) if recursive_times[i] is not None]
